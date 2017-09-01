@@ -1,7 +1,7 @@
 # illuminopoly-sim
 _Fiction generation through simulation of secret societies._
 
-Illuminopoly-Sim is a system intended to write 50,000 words of fiction for the [2017 NaNoGenMo](https://github.com/NaNoGenMo/2017/issues/6) contest.
+illuminopoly-sim is a system intended to write 50,000 words of fiction for the [2017 NaNoGenMo](https://github.com/NaNoGenMo/2017/issues/6) contest.
 It will simulate a set of AIs playing _[Illuminopoly](http://www.gamecabinet.com/rules/Illuminopoly.html)_, and narrate their gameplay as a story.
 To better narrate it, the story will be framed as a narration of competing factions and secret societies that are trying to control a city.
 Just for simplicity, I'm going for London, and hard-coding the names for streets etc.
