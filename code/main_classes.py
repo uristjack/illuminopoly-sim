@@ -2,9 +2,10 @@ import random
 
 class Faction(object):
     """A class to create factions - or players - for Illuminopoly."""
-    def __init__(self, name):
-        money = 1500000
+    def __init__(self, name, idnumber):
+        self.money = 1500000
         self.name = name
+        self.idnumber = idnumber
         self.political_favour = 0 # Number of "Political Favour" cards left
         self.jail_turns = 0 # Number of turns left in jail
         self.position = 0
@@ -27,7 +28,11 @@ class RealEstate(object):
         self.rent_3_house = rent_3_house
         self.rent_4_house = rent_4_house
         self.rent_hotel = rent_hotel
+
+        self.is_buyable = True
         self.colour = colour
+        self.is_owned = False
+        self.owner = 0
 
 
 class Railroads(object):
@@ -36,13 +41,16 @@ class Railroads(object):
         self.name = name
         self.position = position
         
-        cost = 200000
-        rent = 25000
-        double_rent = 2*rent
-        triple_rent = 3*rent
-        quad_rent = 4*rent
+        self.cost = 200000
+        self.rent = 25000
+        self.double_rent = 2*self.rent
+        self.triple_rent = 3*self.rent
+        self.quad_rent = 4*self.rent
 
-        is_railroad = True
+        self.is_buyable = True
+        self.is_railroad = True
+        self.is_owned = False
+        self.owner = 0
 
 
 class SpecialRealEstate(object):
@@ -58,58 +66,74 @@ class SpecialRealEstate(object):
         self.name = name
         self.position = position
         # These tokens used for special reasons.
-        is_chance_card = False # Have a function for if someone lands on this
-        is_chest_card = False # Have a function for if someone lands on this
-        is_go = False # Function for money creation
-        is_go_to_jail = False # This will send people to jail, specific function
-        is_free_parking = False # Specific functions for free parking
-        is_tax = False # Specific function for taxing people
+        self.is_chance_card = False # Have a function for if someone lands on this
+        self.is_chest_card = False # Have a function for if someone lands on this
+        self.is_go = False # Function for money creation
+        self.is_go_to_jail = False # This will send people to jail, specific function
+        self.is_free_parking = False # Specific functions for free parking
+        self.is_tax = False # Specific function for taxing people
+        self.is_owned = False
+        self.is_buyable = False
 
 
-class utility(object):
+class Utility(object):
     """Provides a class for all utilities. These will have specific functions
     regarding rent - what with the rolling dice thingo. """
     def __init__(self, name, position, cost):
         self.name = name
         self.position = position
         self.cost = cost
-        is_utility = True
+        self.is_utility = True
+        self.is_owned = False
+        self.owner = 0
 
 
 class CommunityChestCard(SpecialRealEstate):
     """Imports most of its stuff from SpecialRealEstate. Only difference is
     that the is_chest_card token is set to true. A function will use this."""
-    is_chest_card = True
+    def __init__(self, name, position):
+        SpecialRealEstate.__init__(self, name, position)
+        self.is_chest_card = True
 
 
 class ChanceCard(SpecialRealEstate):
     """Imports most of its stuff from SpecialRealEstate. Only difference is
     that the is_chance_card token is set to true. A function will use this."""
-    is_chance_card = True
+    def __init__(self, name, position):
+        SpecialRealEstate.__init__(self, name, position)
+        self.is_chance_card = True
 
 
 class Go(SpecialRealEstate):
     """Imports most of its stuff from SpecialRealEstate. Only difference is
     that the is_go token is set to true. A function will use this."""
-    is_go = True
+    def __init__(self, name, position):
+        SpecialRealEstate.__init__(self, name, position)
+        self.is_go = True
 
 
 class GoToJail(SpecialRealEstate):
     """Imports most of its stuff from SpecialRealEstate. Only difference is
     that the is_go_to_jail token is set to true. A function will use this."""
-    is_go_to_jail = True
+    def __init__(self, name, position):
+        SpecialRealEstate.__init__(self, name, position)
+        self.is_go_to_jail = True
 
 
 class FreeParking(SpecialRealEstate):
     """Imports most of its stuff from SpecialRealEstate. Only difference is
     that the is_free_parking token is set to true. A function will use this."""
-    is_free_parking = True
+    def __init__(self, name, position):
+        SpecialRealEstate.__init__(self, name, position)
+        self.is_free_parking = True
 
 
 class TaxCard(SpecialRealEstate):
     """Imports most of its stuff from SpecialRealEstate. Only difference is
     that the is_tax token is set to true. A function will use this."""
-    is_tax = True
+    def __init__(self, name, position):
+        SpecialRealEstate.__init__(self, name, position)
+        self.is_tax = True
 
 
 """Now we begin the tedious process of creating 40 different spaces. While it's
@@ -168,8 +192,8 @@ chance_space_3 = ChanceCard("Chance", 36)
 tax_space_1 = TaxCard("Income Tax", 4)
 tax_space_2 = TaxCard("Property Tax", 38)
 
-electric_company = utility("Electric Company", 12, 150000)
-water_works = utility("Water Works", 28, 150000)
+electric_company = Utility("Electric Company", 12, 150000)
+water_works = Utility("Water Works", 28, 150000)
 
 board = {0:go_space,
          1:old_kent,
@@ -221,12 +245,43 @@ Also, a random name generation schema for the factions - using JSON dicts probab
 - would be cool. But that's for later.
 """
 
-aristocratic_faction = Faction("The Bavarian Illuminati")
-patternmaker_faction = Faction("The Globalist Council")
-automotive_faction = Faction("Castiglione Automotive Group")
-anarchist_faction = Faction("Class Soldiers")
-infrastructure_faction = Faction("RJFC Infrastructure")
+aristocratic_faction = Faction("The Bavarian Illuminati", 1)
+patternmaker_faction = Faction("The Globalist Council", 2)
+automotive_faction = Faction("Castiglione Automotive Group", 3)
+anarchist_faction = Faction("Class Soldiers", 4)
+infrastructure_faction = Faction("RJFC Infrastructure", 5)
     #Heh. Note to self: RJFC stands for Russo-Japanese Fishing Colony
-slumlord_faction = Faction("Tenament Holdings")
-alien_faction = Faction("The Greys")
-tramp_faction = Faction("Hobo Bob")
+slumlord_faction = Faction("Tenament Holdings", 6)
+alien_faction = Faction("The Greys", 7)
+tramp_faction = Faction("Hobo Bob", 8)
+
+faction_ids = {1:aristocratic_faction,
+               2:patternmaker_faction,
+               3:automotive_faction,
+               4:anarchist_faction,
+               5:infrastructure_faction,
+               6:slumlord_faction,
+               7:alien_faction,
+               8:tramp_faction
+              }
+
+def turn(player):
+    dice = random.randint(1,6)+random.randint(1,6)
+    player.position = (player.position + dice)%40
+    property_here = board[player.position]
+    print("%s moves to %s." % (player.name, property_here.name))
+    if hasattr(property_here, "cost") == True:        
+        if property_here.is_owned == False:
+            if player.money >= property_here.cost:
+                player.money = player.money - property_here.cost
+                property_here.is_owned = True
+                property_here.owner = player.idnumber
+                print("%s buys %s for $%s." % (player.name, property_here.name, property_here.cost))
+                print("%s has $%s left." % (player.name, player.money))
+            if player.money < property_here.cost:
+                print("%s is unable to buy land at %s." % (player.name, property_here.cost)) 
+        elif property_here.is_owned == True:
+            print("The property at %s is owned by %s." % (property_here.name, faction_ids[property_here.owner].name))    
+    else:
+        print("NOPE")
+
